@@ -1,0 +1,22 @@
+{
+  "key": {
+    "id": "EMP223",
+    "contactNumber": "01234567"
+  },
+  "topic": "employee-feed-topic",
+  "value": {
+    "id": "EMP223",
+    "organizationId": "BY",
+    "employeeName": "RAHUL KUMAR",
+    "contactNumber": "01234567",
+    "role": "technical consultant",
+    "address": {
+      "addressLine1": "Distribution center 2",
+      "addressLine2": "DC002 ORG001",
+      "city": "Plano",
+      "state": "TX",
+      "country": "US",
+      "zip": "75024"
+    }
+  }
+}
