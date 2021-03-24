@@ -1,34 +1,141 @@
-server:
-  port: 8181
+#
+# Copyright (c) 2017 Yantriks LLC. All Rights Reserved. No warranty, explicit or implicit, is provided.
+# NOTICE: All information contained herein is, and remains the property of Yantriks LLC and its suppliers or licensors,
+# if any. The intellectual and technical concepts contained herein are proprietary to Yantriks LLC and may be covered
+# by U.S. and Foreign Patents, patents in process, and are protected by trade secret or copyright law. Dissemination of
+# this information or reproduction of this material is strictly forbidden unless prior written permission is obtained
+# from Yantriks LLC.
+#
 
+logging:
+  #  config: D:/logback.xml
+  level.com.yantriks.yso: DEBUG
+  level.io.micrometer.influx: WARN
+  level.org.apache.kafka: WARN
+  level.com.yantriks.yso.api.swagger: INFO
+
+server:
+  port: 8099
+  compression:
+    enabled: false
+    min-response-size: 2048
+
+serializer:
+  kryo:
+    threadCount: 10
+
+cassandra:
+  contactPoints: localhost
+  port: 9042
+  cluster-name: dc1
+  keyspace: yantriks_bootcamp
+  consistency: LOCAL_QUORUM
+  local:
+    host:
+      connection:
+        max:
+          requests: 32768
+      connections:
+        core: 4
+        max: 10
+  remote:
+    host:
+      connection:
+        max:
+          requests: 2000
+      connections:
+        core: 2
+        max: 4
+
+common:
+  services:
+    calculate-api:
+      url: http://localhost:8094
+
+spring:
+  profiles:
+    ### detailed-trace - profile to enable sleuth detailed tracing
+    active: "hazelcast-client,tcp-ip-discovery"
+  output:
+    ansi:
+      enabled: ALWAYS
+  main:
+    banner-mode: log
+  codec:
+    max-in-memory-size: 1MB
+  zipkin.enabled: false
+  sleuth.enabled: false
+  sleuth.scheduled.enabled: false
+  sleuth.sampler.probability: 1.0
+  application.name: yso-configurator
+  cloud.gcp.core:
+        enabled: false
+
+management:
+  metrics:
+    web:
+      server:
+        auto-time-requests: true
+    export:
+      influx:
+        auto-create-db: true # Whether to create the Influx database if it does not exist before attempting to publish metrics to it. (Default: true)
+        #        batch-size: 10000 # Number of measurements per request to use for this backend. If more measurements are found, then multiple requests will be made. (Default: 10000)
+        #        compressed: true # Whether to enable GZIP compression of metrics batches published to Influx. (Default: true)
+        #        connect-timeout: 1s # Connection timeout for requests to this backend. (Default: 1s)
+        #        consistency: one # Write consistency for each point. (Default: one)
+        db: telegraf # Tag that will be mapped to "host" when shipping metrics to Influx. (Defaut: mydb)
+        enabled: false # Whether exporting of metrics to this backend is enabled. (Default: true)
+        #        num-threads: 2 # Number of threads to use with the metrics publishing scheduler. (Default: 2)
+        #        password: mysecret # Login password of the Influx server.
+        #        read-timeout: 10s # Read timeout for requests to this backend. (Default: 10s)
+        #        retention-policy: my_rp # Retention policy to use (Influx writes to the DEFAULT retention policy if one is not specified).
+        step: 30s # Step size (i.e. reporting frequency) to use. (Default: 1m)
+        uri:  http://localhost:8086 # URI of the Influx server. (Default: http://localhost:8086)
+        user-name: admin # Login user of the Influx server.
+      statsd:
+        #        flavor: DATADOG # Choose which variant of the StatsD line protocol to use. (Default: DATADOG)
+        #        pollingFrequency: 10s # Determines how often gauges will be polled. (Default: 10s)
+        enabled: false # Whether exporting of metrics to this backend is enabled. (Default: true)
+        #        publishUnchangedMeters: true # Shows whether unchanged meters should be published to the StatsD server. (Default: true)
+        #        maxPacketLength: 1400 # Keep the total length of the payload within your network's MTU. (Default: 1400)
+        step: 30s # Step size (i.e. reporting frequency) to use. (Default: 1m)
+        host: localhost # URI of the StatsD server. (Default: localhost)
+        port: 8125 # URI of the StatsD server. (Default: 8125)
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+    endpoint:
+      health:
+        show-details: always
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
 
 ypfp:
-  customer-name: yantriksbootcamp
+  imdg:
+    hazelcast:
+      group.name: yso
+      client:
+        connection:
+          attempt:
+            limit: 100
+            period: 5000
+  feature:
+    banners:
+      enabled: false
 
-streamer:
-  employee-update-topic: employee-feed-topic
-  employee-target-topic: employee-feed-target-topic
-kafka:
-  consumer:
-    key.deserializer: com.reactivekafka.reactivekafkademo.deserialization.JacksonDeserializer
-    value.deserializer: om.reactivekafka.reactivekafkademo.deserialization.JacksonDeserializer
-    spring.json.trusted.packages: "*"
-    spring.json.use.type.headers: false
-    bootstrap.servers: localhost:9092
-    group.id: custom-12
-    auto.offset.reset: earliest
-    enabled: true
-    dlq-publish.enabled: true
-    retry:
-      limit: 1
-      backoff:
-        max: 15s
-        initial: 10s
-    commit.interval: 5s
-  producer:
-    key.serializer: com.yantriks.academy.kafka.serialization.JacksonSerializer
-    value.serializer: com.yantriks.academy.kafka.serialization.JacksonSerializer
-    bootstrap.servers: localhost:9092
-    max.in.flight.requests.per.connection: 100
-    acks: all
-    enabled: true
+transitData:
+  default-zones: 46
+  zipCodeCustomizer:
+    digitsCount: '{US: 3,CA : 4}' # Truncate zip code in transit data up to specified for a country number of character
+    defaultCount: '{US: 5,CA : 6}' # Truncate incoming zip code in optimization request to specified for a country number of character
+    overrides-enabled: '{US: true,CA : true}' #If true, "defaultCount" zipcode will override "digitsCount" zipcode data
+
+weightage:
+  coefficient:
+    cart: 0.0
+    line: 0.0
+    product: 0.0
+
