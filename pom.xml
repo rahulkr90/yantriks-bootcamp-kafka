@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bootcamp.customapi</groupId>
-	<artifactId>apiextension</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>apiextension-microservice</artifactId>
+	<version>0.0.1-app</version>
 	<name>apiextension</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>

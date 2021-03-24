@@ -1,5 +1,6 @@
 package com.yantriks.yso.handler;
 
+import com.yantriks.ypfp.common.api.exception.EntityDoesNotExistException;
 import com.yantriks.ypfp.ycs.location.services.core.dto.LocationAndFulfillmentTypeDetail;
 import com.yantriks.ypfp.ycs.location.services.core.dto.key.LocationAndFulfillmentTypeDetailKey;
 import com.yantriks.yso.capacity.cache.services.api.handler.FulfillmentTypeCapacityHandler;
@@ -21,46 +22,52 @@ public class FulfillmentTypeCapacityExtensionHandler {
 
     @Generated
     private static final Logger log = LoggerFactory.getLogger(FulfillmentTypeCapacityExtensionHandler.class);
-    public FulfillmentTypeCapacityExtensionHandler() {
-    }
+    @Autowired
+    LocationFulfillmentTypeEntryLoader loader;
     @Autowired
     private FulfillmentTypeCapacityHandler handler;
 
-    @Autowired
-    private LocationFulfillmentTypeEntryLoader loader;
+    public FulfillmentTypeCapacityExtensionHandler() {
+    }
 
     public Mono<FulfillmentTypeCapacityDetail> manage(FulfillmentTypeCapacityDetail fulfillmentTypeCapacityDetail) {
+
+
+        return (handler.update(fulfillmentTypeCapacityDetail)
+                .onErrorResume(error -> {
+                    if (!(error instanceof EntityDoesNotExistException)) {
+                        log.debug("Error : {}",error.getMessage());
+                    }
+                    return handler.create(fulfillmentTypeCapacityDetail);
+                })).doOnSuccess(s->{
+            updateLocationFT(fulfillmentTypeCapacityDetail);
+        });
+    }
+
+    private void updateLocationFT(FulfillmentTypeCapacityDetail fulfillmentTypeCapacityDetail) {
         LocationAndFulfillmentTypeDetailKey locationFTKey =
                 LocationAndFulfillmentTypeDetailKey.builder().orgId(fulfillmentTypeCapacityDetail.getOrgId()).sellingChannel(fulfillmentTypeCapacityDetail.getSellingChannel())
                         .locationType(fulfillmentTypeCapacityDetail.getLocationType()).locationId(fulfillmentTypeCapacityDetail.getLocationId())
                         .fulfillmentType(fulfillmentTypeCapacityDetail.getFulfillmentType()).build();
         Mono<LocationAndFulfillmentTypeDetail> locationFTDetail = loader.getLoad(locationFTKey);
 
-        log.debug("locationAndFulfillmentTypeDetail : {}", locationFTDetail.subscribe(System.out::println));
-        locationFTDetail.subscribe(detail-> {
+        locationFTDetail.subscribe(detail -> {
             loader.doLoad(buildLocationFTDetailRequest(fulfillmentTypeCapacityDetail.getCapacity(), detail)).subscribe();
-            //log.debug("After update locationAndFulfillmentTypeDetail : {}", detail);
-        });
-
-
-        return handler.update(fulfillmentTypeCapacityDetail).doOnError(throwable -> {
-            handler.create(fulfillmentTypeCapacityDetail);
         });
     }
 
     private Mono<LocationAndFulfillmentTypeDetail> buildLocationFTDetailRequest(Map<LocalDate, CapacityDetail> capacity,
                                                                                 LocationAndFulfillmentTypeDetail detail) {
-        if(capacity.containsKey(LocalDate.now())) {
+        if (capacity.containsKey(LocalDate.now())) {
             if (capacity.get(LocalDate.now()).getCapacity() > 0) {
                 detail.setEnabled(true);
             } else if (capacity.get(LocalDate.now()).getCapacity() == 0) {
                 detail.setEnabled(false);
             }
-        }else{
+        } else {
             detail.setEnabled(false);
         }
 
         return Mono.just(detail);
     }
-
 }

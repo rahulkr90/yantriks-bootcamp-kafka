@@ -39,7 +39,6 @@ public class FulfillmentTypeCapacityExtnController extends GenericController<Ful
     @Operation(summary = "Disable/Enable Location Fulfillment Type data as per Capacity Cache Data",description ="This API supports defining capacity by date for a given Location and Fulfillment Type." )
     public Mono<ResponseEntity<FulfillmentTypeCapacityDetailResponse>> create(
             @Parameter(required = true) @Valid @RequestBody FulfillmentTypeCapacityDetailRequest request) {
-
         return handler.manage(mapper.requestToDetail(request))
                 .map(mapper::toResponse)
                 .transform(processGenericCreateResponse(request));
