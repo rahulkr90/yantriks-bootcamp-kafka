@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.bootcamp.customapi</groupId>
-	<artifactId>apiextension-microservice</artifactId>
+	<artifactId>yso-extension-microservice</artifactId>
 	<version>0.0.1-app</version>
-	<name>apiextension</name>
+	<name>ysoextension-</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>1.8</java.version>

@@ -51,6 +51,10 @@ common:
   services:
     calculate-api:
       url: http://localhost:8094
+      lft_endpoint: /location-services/location-fulfillment-type
+api:
+  url: http://localhost:8099
+  endpoint: /capacity-cache-services/fulfillment-type-capacity
 
 spring:
   profiles:

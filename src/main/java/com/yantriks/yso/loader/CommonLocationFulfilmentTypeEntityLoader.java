@@ -17,7 +17,7 @@ import reactor.core.publisher.Mono;
 
 @Slf4j
 @Component
-public class LocationFulfillmentTypeEntryLoader {
+public class CommonLocationFulfilmentTypeEntityLoader {
 
     @Autowired
     private WebClient webClient;
@@ -25,6 +25,9 @@ public class LocationFulfillmentTypeEntryLoader {
 
     @Value("${common.services.calculate-api.url}")
     private String locationFulfillmentTypeUrl;
+
+    @Value("${common.services.calculate-api.lft_endpoint}")
+    private String locationFFTEndpoint;
 
     public Mono<LocationAndFulfillmentTypeDetail> getLoad(LocationAndFulfillmentTypeDetailKey key)  {
 
@@ -36,31 +39,19 @@ public class LocationFulfillmentTypeEntryLoader {
 
 
     }
-
-  /*  public Mono<? extends LocationAndFulfillmentTypeDetail> createLoad(Mono<LocationAndFulfillmentTypeDetail> detail) {
-
-        return webClient
-                .method(HttpMethod.PUT)
-                .uri(locationFulfillmentTypeUrl + "/location-services/location-fulfillment-type")
-                .body(detail, LocationAndFulfillmentTypeDetail.class)
-                .retrieve()
-                .bodyToMono(LocationAndFulfillmentTypeDetail.class);
-    }*/
-
     public Mono<? extends LocationAndFulfillmentTypeDetail> createLoad(Mono<LocationAndFulfillmentTypeDetail> detail,HttpMethod httpMethod) {
 
         return webClient
                 .method(httpMethod)
-                .uri(locationFulfillmentTypeUrl + "/location-services/location-fulfillment-type")
+                .uri(locationFulfillmentTypeUrl + locationFFTEndpoint)
                 .body(detail, LocationAndFulfillmentTypeDetail.class)
                 .retrieve()
                 .bodyToMono(LocationAndFulfillmentTypeDetail.class);
     }
     public Mono<LocationAndFulfillmentTypeDetail> doLoad(Mono<LocationAndFulfillmentTypeDetail> detail)  {
-        log.debug("before update locationAndFulfillmentTypeDetail : {}", detail.subscribe(System.out::println));
         return webClient
                 .method(HttpMethod.PUT)
-                .uri(locationFulfillmentTypeUrl + "/location-services/location-fulfillment-type")
+                .uri(locationFulfillmentTypeUrl + locationFFTEndpoint)
                 .body(detail, LocationAndFulfillmentTypeDetail.class)
                 .retrieve()
                 .onStatus(HttpStatus::is4xxClientError, error -> error.bodyToMono(GenericExceptionResponse.class))
