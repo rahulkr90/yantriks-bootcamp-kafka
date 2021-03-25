@@ -1,22 +1,52 @@
 {
+  "isFullyQualifiedTopicName": false,
   "key": {
-    "id": "EMP223",
-    "contactNumber": "01234567"
+    "orgId": "ORG001",
+    "productId": "PROD_2",
+    "uom": "EACH",
+    "locationId": "STORE_1",
+    "locationType": "STORE"
   },
-  "topic": "employee-feed-topic",
+  "operation": "CREATE",
+  "topic": "custom-inventory-update-feed",
   "value": {
-    "id": "EMP223",
-    "organizationId": "BY",
-    "employeeName": "RAHUL KUMAR",
-    "contactNumber": "01234567",
-    "role": "technical consultant",
-    "address": {
-      "addressLine1": "Distribution center 2",
-      "addressLine2": "DC002 ORG001",
-      "city": "Plano",
-      "state": "TX",
-      "country": "US",
-      "zip": "75024"
+    "eventType": "SUPPLY_UPDATE",
+    "feedType": "ABSOLUTE",
+    "locationId": "STORE_1",
+    "locationType": "STORE",
+    "orgId": "ORG001",
+    "quantity": 120,
+    "productId": "PROD_2",
+    "uom": "EACH",
+    "updateTimeStamp": "2021-03-18T09:55:00.882-06:00",
+    "to": {
+      "supplyTypes": [
+        {
+          "supplyType": "SOH",
+          "quantity": 160,
+          "segment":"COMMON_POOL"
+
+        },
+        {
+          "supplyType": "TSF_RESERVED",
+          "quantity": 10,
+          "segment":"COMMON_POOL"
+
+        },
+        {
+          "supplyType": "DISTRO",
+          "quantity": 10,
+          "segment":"COMMON_POOL"
+
+        }
+      ]
+    },
+    "audit": {
+      "transactionId": "DEFAULT",
+      "transactionReason": "SKULOC",
+      "transactionSystem": "Inventory Service Consumer",
+      "transactionType": "SUPPLY_FEED",
+      "transactionUser": "INVS"
     }
   }
 }
