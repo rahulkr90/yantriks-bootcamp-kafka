@@ -1,6 +1,6 @@
 ************************* To use this application follow below steps ****************************
 Run the executable jar:
-java -jar apiextension-microservice-0.0.1-app.jar
+java -jar yso-extension-microservice-0.0.1-app.jar
 
 Access the application using:
 http://localhost:8099/swagger-ui.html
