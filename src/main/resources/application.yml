@@ -3,11 +3,13 @@ server:
 
 
 ypfp:
-  customer-name: yantriksbootcamp
+  customer-name: CustomerLocal1
 
 streamer:
   employee-update-topic: employee-feed-topic
   employee-target-topic: employee-feed-target-topic
+  custom-supply-update-topic: custom-inventory-update-feed-integration-topic-US
+  inventory-update-topic : inventory-update-feed
 kafka:
   consumer:
     key.deserializer: com.reactivekafka.reactivekafkademo.deserialization.JacksonDeserializer

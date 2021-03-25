@@ -69,7 +69,7 @@ public class EmployeeKafkaConsumer<K,V,R> {
     private String employeeTargetTopicName;
     @Autowired
     private CommonKafkaIntegrationService commonKafkaIntegrationService;
-    @EventListener(ApplicationReadyEvent.class)
+   // @EventListener(ApplicationReadyEvent.class)
     protected void consume() {
 
         SenderOptions<K, V> senderOptions = SenderOptions.create(defaultProducerPropsConfiguration.getProducer());
